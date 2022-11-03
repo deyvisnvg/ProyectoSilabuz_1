@@ -128,7 +128,18 @@ class Libro:
         return self._continuar()
 
     def buscar_libro2(self):
-        pass
+        Title = '''
+        ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+        ||||    BUSQUEDA DE LIBRO POR AUTOR, EDITOR O GÉNERO    ||||
+        ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+        '''
+        print(Title)
+        param = input("Ingrese el libro a buscar por autor, editor o género: ")
+        for linea in self._lista_libros:
+            if param == linea["autores"] or param == linea["editorial"] or param == linea["genero"]:     
+                print(self._print_libros(linea))
+                
+        return self._continuar()
 
     def buscar_libro3(self):
         num_autor = int(input("\nDigite la cantidad de autores: "))
@@ -245,7 +256,9 @@ def run():
             if respuesta.upper() == 'N':
                 break
         elif opcion == 7:
-            pass
+            respuesta = libro.buscar_libro2()
+            if respuesta.upper() == 'N':
+                break
         elif opcion == 8:
             libro.buscar_libro3()
         elif opcion == 9:
