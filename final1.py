@@ -35,14 +35,11 @@ class Libro:
 
     def leer_archivo(self):
         if(len(self._lista_libros) == 0):
-            count = 1
             with open(self.__nombre_csv, "r") as file:
                 reader = csv.DictReader(file)
 
                 for libro in reader:
-                    if count < 4:
-                        self._lista_libros.append(libro)
-                    count+=1
+                    self._lista_libros.append(libro)
             
             print("\nMensaje: Se ha cargado los datos del archivo correctamente!!!")
         else:
