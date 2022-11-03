@@ -31,6 +31,7 @@ class Libro:
         self.editorial = editorial
         self.autores = autores
         self._lista_libros = []
+        self.__nombre_csv = "Libros.csv"
 
     def leer_archivo(self):
         if(len(self._lista_libros) == 0):
@@ -48,6 +49,7 @@ class Libro:
             print("\nMensaje: El archivo ya ha sido leído")
         
         return self._continuar()
+
     def listar_libro(self):
         Title = '''
         |||||||||||||||||||||||||||||
@@ -57,8 +59,8 @@ class Libro:
         print(Title)
 
         try:
-            for libro in self._lista_libros[:3]:
-                self._print_libros(libro)
+            for libro in self._lista_libros:
+                print(self._print_libros(libro))
 
             return self._continuar()
 
@@ -107,30 +109,56 @@ class Libro:
         '''
         print(Title)
 
-        for libro in self.lista_libros:
+        for libro in self._lista_libros:
             count_autor = len(libro['autores'].split(','))
             
             if count_autor == num_autor:
-                self._print_libros(libro)
+                print(self._print_libros(libro))
 
         return self._continuar()
-
 
     def editar_libro(self):
         pass
 
     def guardar_libro(self):
-        pass
+        respuesta = input("\nDesea guardar los libros en un archivo txt o csv? \n" +
+                            "Seleccione una opcion: 1:txt, 2:csv: ")
+        nombre_archivo = input("\nEspecifique el nombre del archivo a generar: ")
+
+        if respuesta == '2' and len(self._lista_libros) > 0:
+            with open(nombre_archivo + '.csv', 'w') as file:
+                colum = list(self._lista_libros[0].keys())
+
+                writer = csv.DictWriter(file, fieldnames=colum)
+                writer.writeheader()
+
+                writer.writerows(self._lista_libros)
+        else:
+            with open(nombre_archivo + '.txt', 'w') as file:
+                for libro in self._lista_libros:
+                    file.write(self._print_libros(libro))
+        
+        Title = '''
+        ||||||||||||||||||||||||||||||
+        ||||    GUARDAR LIBRO    ||||
+        ||||||||||||||||||||||||||||||
+        '''
+        print(Title)
+        print(f"Mensaje: Los Libros se guardaron correctamente!!!")
+
+        return self._continuar()
 
     def _print_libros(self, libro):
-        print(colored(f"\n\t LIBRO {libro['id']}:\n", 'yellow', attrs=['bold']))
-        print(f"\tTitle: {libro['titulo']}\n")
-        print(f"Gender: {libro['genero']}\n")
-        print(f"\tISBN: {libro['ISBN']}\n")
-        print(f"Editorial: {libro['editorial']}\n")
-        print(f"\tAuthors: {libro['autores']}\n")
-        print("\t**********" * 5)
+        titulo = f"\n\tLIBRO {libro['id']}:\n"
+        cuerpo = (f"\tTitle: {libro['titulo']}\n"
+                    f"\tGender: {libro['genero']}\n"
+                    f"\tISBN: {libro['ISBN']}\n"
+                    f"\tEditorial: {libro['editorial']}\n"
+                    f"\tAuthors: {libro['autores']}\n")
+        espacio = "\t**********" * 5
 
+        return titulo + cuerpo + espacio
+        
     def _continuar(self):
         respuesta = input("\nDesea continuar? S/N: ")
 
@@ -174,7 +202,7 @@ def run():
         elif opcion == 9:
             pass
         elif opcion == 10:
-            pass
+            libro.guardar_libro()
         else:
             print("La opcion no es correcta, vuelva a selecionar: ")
 
