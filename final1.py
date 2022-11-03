@@ -1,5 +1,4 @@
 import csv
-from termcolor import colored
 
 Tema = '''
     B I E N V E N I D O    R E G I S T R A R    L I B R O S
@@ -22,7 +21,7 @@ Menu = '''
 
 
 class Libro:
-
+    #
     def __init__(self, id, titulo, genero, ISBN, editorial, autores):
         self.id = id
         self.titulo = titulo
