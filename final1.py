@@ -56,29 +56,27 @@ class Libro:
 
         try:
             for libro in self._lista_libros:
-                print(self._print_libros(libro))
+                self.print_libros(libro)
 
             return self._continuar()
 
         except:
-            print(
-                f"Mensaje: No es posible continuar listando los libros ya que se encuentra incompleto")
+            print(f"\tMensaje: No es posible continuar listando los libros ya que se encuentra incompleto")
 
-    def agregar_libro(self):
-
+    def agregar_libro(self, libros_eliminados):
+        self._libros_eliminados = libros_eliminados
         lista_libro = [self.id,self.titulo,self.genero,self.ISBN,self.editorial,self.autores]
-        agregaono = input("Esta seguro que quiere agregar un nuevo libro(S/N): ")
+        respuesta = input("\nEsta seguro que quiere agregar un nuevo libro(S/N): ")
         try:
             with open(self.__nombre_csv,'a',newline='') as nuevo_libro:
-                if agregaono.upper() == "S":
+                if respuesta.upper() == "S":
                     objeto_libro = csv.writer(nuevo_libro)
                     objeto_libro.writerow(lista_libro)
-                    print("\nMensaje: El libro fue agregado correctamente!!")
-            self._continuar()
+                    print("\n\tMensaje: El libro fue agregado correctamente!!")
         except Exception as ex:
             print("Mensaje: Ha ocurrido un error", ex)
         
-        self.leer_archivo()       
+        return self.leer_archivo()       
                 
 
     def eliminar_libro(self):
@@ -115,7 +113,7 @@ class Libro:
         param = input("Ingrese el libro a buscar por título o ISBN: ")
         for linea in self._lista_libros:
             if param == linea["titulo"] or param == linea["ISBN"]:     
-                print(self._print_libros(linea))
+                self.print_libros(linea)
                 
         return self._continuar()
                 
@@ -128,7 +126,7 @@ class Libro:
         print(Title)
         lista_aux = sorted(self._lista_libros, key=lambda libro:libro["titulo"])
         for libro in lista_aux:
-            print(self._print_libros(libro))
+            self.print_libros(libro)
         
         return self._continuar()
 
@@ -141,8 +139,9 @@ class Libro:
         print(Title)
         param = input("Ingrese el libro a buscar por autor, editor o género: ")
         for linea in self._lista_libros:
-            if param == linea["autores"] or param == linea["editorial"] or param == linea["genero"]:     
-                print(self._print_libros(linea))
+            autor_libro = linea["autores"].split(",")
+            if param in autor_libro or param == linea["editorial"] or param == linea["genero"]:     
+                self.print_libros(linea)
                 
         return self._continuar()
 
@@ -160,12 +159,41 @@ class Libro:
             count_autor = len(libro['autores'].split(','))
             
             if count_autor == num_autor:
-                print(self._print_libros(libro))
+                self.print_libros(libro)
 
         return self._continuar()
 
-    def editar_libro(self):
-        pass
+    def editar_libro(self,index,lista_libros):
+        #self.leer_archivo()
+        #index = [i for i,libro in enumerate(self._lista_libros) if libro["id"] == self.id][0]
+        self._lista_libros = lista_libros
+        
+        if self.titulo != "":
+            self._lista_libros[index]["titulo"] = self.titulo
+        if self.genero != "":
+            self._lista_libros[index]["genero"] = self.genero
+        if self.ISBN != "":
+            self._lista_libros[index]["ISBN"] = self.ISBN
+        if self.editorial != "":
+            self._lista_libros[index]["editorial"] = self.editorial
+        if self.autores != "":
+            self._lista_libros[index]["autores"] = self.autores
+        
+        if len(self._lista_libros) > 0:
+            with open(self.__nombre_csv, 'w') as file:
+                colum = list(self._lista_libros[0].keys())
+
+                writer = csv.DictWriter(file, fieldnames=colum)
+                writer.writeheader()
+
+                writer.writerows(self._lista_libros)
+                
+        print("\nDatos modificados:")
+        print("-"*20,"\n")
+        
+        self.print_libros(self._lista_libros[index])
+        
+        return self._continuar()
 
     def guardar_libro(self):
         respuesta = input("\nDesea guardar los libros en un archivo txt o csv? \n" +
@@ -183,7 +211,7 @@ class Libro:
         else:
             with open(nombre_archivo + '.txt', 'w') as file:
                 for libro in self._lista_libros:
-                    file.write(self._print_libros(libro))
+                    file.write(self.print_libros(libro))
         
         Title = '''
         ||||||||||||||||||||||||||||||
@@ -195,7 +223,7 @@ class Libro:
 
         return self._continuar()
 
-    def _print_libros(self, libro):
+    def print_libros(self, libro):
         titulo = f"\n\tLIBRO {libro['id']}:\n"
         cuerpo = (f"\tTitle: {libro['titulo']}\n"
                     f"\tGender: {libro['genero']}\n"
@@ -203,7 +231,8 @@ class Libro:
                     f"\tEditorial: {libro['editorial']}\n"
                     f"\tAuthors: {libro['autores']}\n")
         espacio = "\t**********" * 5
-
+        print(titulo + cuerpo + espacio)
+        
         return titulo + cuerpo + espacio
         
     def _continuar(self):
@@ -213,7 +242,7 @@ class Libro:
             respuesta = input("Debes responder s ó n. Ingresa nuevamente tu respuesta: ")
 
         return respuesta
-
+    
 
 def run():
     print(Tema)
@@ -234,20 +263,28 @@ def run():
                 break
         elif opcion == 3:
             Title = '''
-        ||||||||||||||||||||||||||||||
-        ||||    AGREGAR LIBRO     ||||
-        ||||||||||||||||||||||||||||||
-        '''
-            print(Title)
-            id_edit = input("Ingrese Id: ")
-            titulo_edit = input("Ingrese el título: ")
-            genero_edit = input("Ingrese el género: ")
-            isbn_edit = input("Ingrese el ISBN: ")
-            editorial_edit = input("Ingrese la editorial: ")
-            autores_edit = input("Ingrese los autores separados por comas: ")
-            lista = [id_edit,titulo_edit,genero_edit,isbn_edit,editorial_edit,autores_edit]
+            ||||||||||||||||||||||||||||||
+            ||||    AGREGAR LIBRO     ||||
+            ||||||||||||||||||||||||||||||
+            '''
+            print(Title) 
+            
+            id = input("Ingrese Id: ")
+            titulo = input("Ingrese el título: ")
+            genero = input("Ingrese el género: ")
+            isbn = input("Ingrese el ISBN: ")
+            editorial = input("Ingrese la editorial: ")
+            autores = input("Ingrese los autores separados por comas: ")
+            
+            libros_eliminados = libro._libros_eliminados
+            
+            lista = [id, titulo, genero, isbn, editorial, autores]     
             libro = Libro(*lista)
-            libro.agregar_libro()
+            
+            respuesta = libro.agregar_libro(libros_eliminados)
+            if respuesta.upper() == 'N':
+                break
+            
         elif opcion == 4:
             respuesta = libro.eliminar_libro()
             if respuesta.upper() == 'N':
@@ -267,7 +304,38 @@ def run():
         elif opcion == 8:
             libro.buscar_libro3()
         elif opcion == 9:
-            pass
+            Title = '''
+            ||||||||||||||||||||||||||||||
+            ||||     EDITAR LIBRO     ||||
+            ||||||||||||||||||||||||||||||
+            '''
+            print(Title)
+            
+            id = input("Ingrese ID del libro a modificar: ")
+            print("\nDatos previos:")
+            print("-"*20)
+            
+            lista_libros = libro._lista_libros
+            index = [i for i,libro in enumerate(lista_libros) if libro["id"] == id][0]
+            
+            libro.print_libros(lista_libros[index])
+            
+            print("\nIngrese nuevos datos:")
+            print("-"*20,"\n")
+            
+            titulo = input("Ingrese el nuevo título: ")
+            genero = input("Ingrese el nuevo género: ")
+            isbn = input("Ingrese el nuevo ISBN: ")
+            editorial = input("Ingrese la nueva editorial: ")
+            autores = input("Ingrese los nuevos autores separados por comas: ")
+            
+            lista = [id, titulo, genero, isbn, editorial, autores]
+            libro = Libro(*lista)
+            
+            respuesta = libro.editar_libro(index,lista_libros)
+            if respuesta.upper() == 'N':
+                break
+            
         elif opcion == 10:
             libro.guardar_libro()
         else:
