@@ -31,18 +31,17 @@ class Libro:
         self.autores = autores
         self._lista_libros = []
         self.__nombre_csv = "Libros.csv"
+        self._libros_eliminados = []
 
     def leer_archivo(self):
-        if(len(self._lista_libros) == 0):
-            with open(self.__nombre_csv, "r") as file:
-                reader = csv.DictReader(file)
+        with open(self.__nombre_csv, "r") as file:
+            reader = csv.DictReader(file)
 
-                for libro in reader:
+            for libro in reader:
+                if libro["id"] not in self._libros_eliminados:
                     self._lista_libros.append(libro)
-            
-            print("\nMensaje: Se ha cargado los datos del archivo correctamente!!!")
-        else:
-            print("\nMensaje: El archivo ya ha sido leído")
+        
+        print("\nMensaje: Se ha cargado los datos del archivo correctamente!!!")
         
         return self._continuar()
 
@@ -95,6 +94,7 @@ class Libro:
         print(Title)
 
         del self._lista_libros[num_libro - 1]
+        self._libros_eliminados.append(num_libro - 1)
 
 
         print(f"\tMensaje: Se ha eliminado el Libro {num_libro} correctamente!!!")
