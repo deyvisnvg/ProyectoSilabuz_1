@@ -31,18 +31,18 @@ class Libro:
         self.autores = autores
         self._lista_libros = []
         self.__nombre_csv = "Libros.csv"
+        self._libros_eliminados = []
 
     def leer_archivo(self):
-        if(len(self._lista_libros) == 0):
-            with open(self.__nombre_csv, "r") as file:
-                reader = csv.DictReader(file)
+        self._lista_libros = []
+        with open(self.__nombre_csv, "r") as file:
+            reader = csv.DictReader(file)
 
-                for libro in reader:
+            for libro in reader:
+                if libro["id"] not in self._libros_eliminados:
                     self._lista_libros.append(libro)
-            
-            print("\nMensaje: Se ha cargado los datos del archivo correctamente!!!")
-        else:
-            print("\nMensaje: El archivo ya ha sido leído")
+        
+        print("\n\tMensaje: Se cargó el archivo y se ha Actualizado la lista de datos correctamente!!!")
         
         return self._continuar()
 
@@ -82,10 +82,10 @@ class Libro:
                 
 
     def eliminar_libro(self):
-        num_libro = int(input("\nDigite el número del libro a eliminar 1, 2 ó 3: "))
+        num_libro = input(f"\nDigite el número del libro a eliminar 1 hasta el {len(self._lista_libros)}: ")
 
-        while num_libro not in (1,2,3):
-            num_libro = int(input("Debes responder 1, 2 ó 3. Ingresa nuevamente tu respuesta: "))
+        # while num_libro not in (1,2,3):
+        #     num_libro = int(input("Debes responder 1, 2 ó 3. Ingresa nuevamente tu respuesta: "))
 
         Title = '''
         ||||||||||||||||||||||||||||||
@@ -94,11 +94,16 @@ class Libro:
         '''
         print(Title)
 
-        del self._lista_libros[num_libro - 1]
+        index = [i for i, libro in enumerate(self._lista_libros) if libro["id"] == num_libro]
+        
+        del self._lista_libros[int(index[0])]
+        self._libros_eliminados.append(num_libro)
 
 
         print(f"\tMensaje: Se ha eliminado el Libro {num_libro} correctamente!!!")
-        return self._continuar()
+
+        return self.leer_archivo()
+
 
     def buscar_libro(self):
         Title = '''
@@ -182,7 +187,7 @@ class Libro:
         
         Title = '''
         ||||||||||||||||||||||||||||||
-        ||||    GUARDAR LIBRO    ||||
+        ||||    GUARDAR LIBRO    |||||
         ||||||||||||||||||||||||||||||
         '''
         print(Title)
