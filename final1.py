@@ -34,6 +34,7 @@ class Libro:
         self._libros_eliminados = []
 
     def leer_archivo(self):
+        self._lista_libros = []
         with open(self.__nombre_csv, "r") as file:
             reader = csv.DictReader(file)
 
@@ -41,7 +42,7 @@ class Libro:
                 if libro["id"] not in self._libros_eliminados:
                     self._lista_libros.append(libro)
         
-        print("\nMensaje: Se ha cargado los datos del archivo correctamente!!!")
+        print("\n\tMensaje: Se cargó el archivo y se ha Actualizado la lista de datos correctamente!!!")
         
         return self._continuar()
 
@@ -64,13 +65,27 @@ class Libro:
                 f"Mensaje: No es posible continuar listando los libros ya que se encuentra incompleto")
 
     def agregar_libro(self):
-        pass
+
+        lista_libro = [self.id,self.titulo,self.genero,self.ISBN,self.editorial,self.autores]
+        agregaono = input("Esta seguro que quiere agregar un nuevo libro(S/N): ")
+        try:
+            with open(self.__nombre_csv,'a',newline='') as nuevo_libro:
+                if agregaono.upper() == "S":
+                    objeto_libro = csv.writer(nuevo_libro)
+                    objeto_libro.writerow(lista_libro)
+                    print("\nMensaje: El libro fue agregado correctamente!!")
+            self._continuar()
+        except Exception as ex:
+            print("Mensaje: Ha ocurrido un error", ex)
+        
+        self.leer_archivo()       
+                
 
     def eliminar_libro(self):
-        num_libro = int(input("\nDigite el número del libro a eliminar 1, 2 ó 3: "))
+        num_libro = input(f"\nDigite el número del libro a eliminar 1 hasta el {len(self._lista_libros)}: ")
 
-        while num_libro not in (1,2,3):
-            num_libro = int(input("Debes responder 1, 2 ó 3. Ingresa nuevamente tu respuesta: "))
+        # while num_libro not in (1,2,3):
+        #     num_libro = int(input("Debes responder 1, 2 ó 3. Ingresa nuevamente tu respuesta: "))
 
         Title = '''
         ||||||||||||||||||||||||||||||
@@ -79,18 +94,42 @@ class Libro:
         '''
         print(Title)
 
-        del self._lista_libros[num_libro - 1]
-        self._libros_eliminados.append(num_libro - 1)
+        index = [i for i, libro in enumerate(self._lista_libros) if libro["id"] == num_libro]
+        
+        del self._lista_libros[int(index[0])]
+        self._libros_eliminados.append(num_libro)
 
-        print(f"Mensaje: Se ha eliminado el Libro {num_libro} correctamente!!!")
 
-        return self._continuar()
+        print(f"\tMensaje: Se ha eliminado el Libro {num_libro} correctamente!!!")
+
+        return self.leer_archivo()
 
     def buscar_libro(self):
-        pass
-
+        Title = '''
+        |||||||||||||||||||||||||||||||||||||||||||||||||||
+        ||||    BUSQUEDA DE LIBRO POR TITULO O ISBN    ||||
+        |||||||||||||||||||||||||||||||||||||||||||||||||||
+        '''
+        print(Title)
+        param = input("Ingrese el libro a buscar por título o ISBN: ")
+        for linea in self._lista_libros:
+            if param == linea["titulo"] or param == linea["ISBN"]:     
+                print(self._print_libros(linea))
+                
+        return self._continuar()
+                
     def ordenar_titulo(self):
-        pass
+        Title = '''
+        |||||||||||||||||||||||||||||||||||||||||||||||||||
+        ||||       LIBROS ORDENADOS POR TITULO         ||||
+        |||||||||||||||||||||||||||||||||||||||||||||||||||
+        '''
+        print(Title)
+        lista_aux = sorted(self._lista_libros, key=lambda libro:libro["titulo"])
+        for libro in lista_aux:
+            print(self._print_libros(libro))
+        
+        return self._continuar()
 
     def buscar_libro2(self):
         pass
@@ -136,7 +175,7 @@ class Libro:
         
         Title = '''
         ||||||||||||||||||||||||||||||
-        ||||    GUARDAR LIBRO    ||||
+        ||||    GUARDAR LIBRO    |||||
         ||||||||||||||||||||||||||||||
         '''
         print(Title)
@@ -182,15 +221,33 @@ def run():
             if respuesta.upper() == 'N':
                 break
         elif opcion == 3:
-            pass
+            Title = '''
+        ||||||||||||||||||||||||||||||
+        ||||    AGREGAR LIBRO     ||||
+        ||||||||||||||||||||||||||||||
+        '''
+            print(Title)
+            id_edit = input("Ingrese Id: ")
+            titulo_edit = input("Ingrese el título: ")
+            genero_edit = input("Ingrese el género: ")
+            isbn_edit = input("Ingrese el ISBN: ")
+            editorial_edit = input("Ingrese la editorial: ")
+            autores_edit = input("Ingrese los autores separados por comas: ")
+            lista = [id_edit,titulo_edit,genero_edit,isbn_edit,editorial_edit,autores_edit]
+            libro = Libro(*lista)
+            libro.agregar_libro()
         elif opcion == 4:
             respuesta = libro.eliminar_libro()
             if respuesta.upper() == 'N':
                 break
         elif opcion == 5:
-            pass
+            respuesta = libro.buscar_libro()
+            if respuesta.upper() == 'N':
+                break
         elif opcion == 6:
-            pass
+            respuesta = libro.ordenar_titulo()
+            if respuesta.upper() == 'N':
+                break
         elif opcion == 7:
             pass
         elif opcion == 8:
