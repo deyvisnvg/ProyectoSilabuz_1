@@ -5,3 +5,9 @@ id,titulo,genero,ISBN,editorial,autores
 9,harry potter,ficcion,123485,delfin,jk
 9,harry potter,ficcion,123485,delfin,jk
 10,el senior de los anillos,ficcion,258963,tiburon,"bill, guti"
+11,el senior de los anillos,ficcion,258963,tiburon,"bill, guti"
+12,el senior de los anillos,ficcion,258963,tiburon,"bill, vega"
+1,hamlet,tragedia,789465,trucha,"bill, vega"
+1,hamlet,tragedia,789464,trucha,"bill, vega"
+,,3,3,3,3
+2,5,6,7,8,"4,6"
