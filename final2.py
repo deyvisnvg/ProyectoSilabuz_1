@@ -19,11 +19,12 @@ Menu = '''
 class PokeApi:
     def __init__(self, api):
         self.API = api
-        self.lista_pokemon = []
 
     def obtener_pokemon(self, detail_pokemon):
         response = requests.get(self.API + detail_pokemon)
-        self.lista_pokemon = response.json()
+        lista_pokemon = response.json()
+
+        return lista_pokemon
 
     def list_poke_generacion(self):
         pass
