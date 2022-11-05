@@ -19,14 +19,42 @@ Menu = '''
 class PokeApi:
     def __init__(self, api):
         self.API = api
-        self.lista_pokemon = []
+        self.lista_generation = []
 
     def obtener_pokemon(self, detail_pokemon):
         response = requests.get(self.API + detail_pokemon)
-        self.lista_pokemon = response.json()
+        lista_pokemon = response.json()
+
+        return lista_pokemon
 
     def list_poke_generacion(self):
-        pass
+        Title = '''
+        ||||||||||||||||||||||||||||||||||||||||||||||
+        ||||    LISTAR POKEMONS POR GENERACIÓN    ||||
+        ||||||||||||||||||||||||||||||||||||||||||||||
+        '''
+        print(Title)
+
+        detail = "generation"
+        generation = input("\tIngrese alguna generación: ")
+
+        detail_generation = detail + "/" + generation
+
+        self.lista_generation = self.obtener_pokemon(detail_generation)
+
+        lista_pokemons = []
+        for pokemon in self.lista_generation["pokemon_species"][:10]:
+            pokemon_species = self.obtener_pokemon(pokemon['url'].replace(self.API, ""))
+            pokemon = self.obtener_pokemon(pokemon_species["varieties"][0]["pokemon"]['url'].replace(self.API, ""))
+
+            lista_pokemons.append({
+                "name": pokemon['name'],
+                # 'ability': 
+                "ability": [abiliy['ability']['name'] for abiliy in pokemon['abilities']]
+            })
+
+        for pokemon in lista_pokemons:
+            self.print_pokemon(pokemon)
 
     def list_poke_forma(self):
         pass
@@ -40,8 +68,13 @@ class PokeApi:
     def list_poke_tipo(self):
         pass
 
-    def print_pokemon(self):
-        pass
+    def print_pokemon(self, pokemon):
+        titulo = f"\n\tNombre {pokemon['name']}:\n"
+        cuerpo = (f"\tHabilidad: {', '.join(pokemon['ability'])}\n"
+                    f"\tUrl imagen: ""\n")
+        espacio = "\t*******************" * 3
+        
+        print(titulo + cuerpo + espacio)
         
     def _continuar(self):
         pass
@@ -60,7 +93,7 @@ def run():
         opcion = int(input("Seleccione una opcion: "))
 
         if opcion == 1:
-            pass
+            pokeAPi.list_poke_generacion()
         elif opcion == 2:
             pass
         elif opcion == 3:
