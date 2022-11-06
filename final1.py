@@ -368,7 +368,7 @@ def run():
         elif opcion == 10:
             libro.guardar_libro()
         elif opcion == 11:
-            libro.guardar_libro()
+            break
         else:
             print("La opcion no es correcta, vuelva a selecionar: ")
 
