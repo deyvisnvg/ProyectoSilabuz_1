@@ -66,18 +66,10 @@ class PokeApi:
         detail_generation = detail + "/" + generation
         lista_generation = self.obtener_pokemon(detail_generation)
 
-        resul_pokemons = []
         for pokemon in lista_generation["pokemon_species"]:
             if pokemon['name'] in self.lista_name_pokemons:
                 poke = self.obtener_pokemon(self.detail_pokemon + "/" + pokemon['name'])
-                resul_pokemons.append({
-                    "name": pokemon['name'],
-                    "ability": [abiliy['ability']['name'] for abiliy in poke['abilities']],
-                    "url_imagen": poke['sprites']['front_default']
-                })
-
-        for pokemon in resul_pokemons:
-            self.print_pokemon(pokemon)
+                self.print_pokemon(poke)
 
         self._continuar()
 
@@ -90,27 +82,17 @@ class PokeApi:
         print(Title)
 
         detail = "pokemon-shape"
-        forma = input("\tIngrese alguna forma Ej.[]: ")
 
-        while int(forma) > 8:
-            forma = input(
-                "\tLa opcion no es correcta, vuelva a ingresar la forma Ej.[]: ")
+        filtro = self.obtener_filtro_pokemon(detail)
+        forma = input(f"\tIngrese alguna forma Ej.{filtro[5:11]}: ")
 
         detail_forma = detail + "/" + forma
         lista_forma = self.obtener_pokemon(detail_forma)
 
-        resul_pokemons = []
         for pokemon in lista_forma["pokemon_species"]:
             if pokemon['name'] in self.lista_name_pokemons:
                 poke = self.obtener_pokemon(self.detail_pokemon + "/" + pokemon['name'])
-                resul_pokemons.append({
-                    "name": pokemon['name'],
-                    "ability": [abiliy['ability']['name'] for abiliy in poke['abilities']],
-                    "url_imagen": poke['sprites']['front_default']
-                })
-
-        for pokemon in resul_pokemons:
-            self.print_pokemon(pokemon)
+                self.print_pokemon(poke)
 
         self._continuar()
 
@@ -125,7 +107,7 @@ class PokeApi:
         for lista in filtrado_habilidad:
             response = requests.get(self.API + "pokemon/" + lista)
             dato = response.json()
-            print(f"Ficha de {lista}")
+            print(f"\n\tFicha de {lista}")
             self.print_pokemon(dato)
 
     def list_poke_habitad(self, endpoint, habitad):
@@ -139,7 +121,7 @@ class PokeApi:
         for lista in filtrado_habitad:
             response = requests.get(self.API + "pokemon/" + lista)
             dato = response.json()
-            print(f"Ficha de {lista}")
+            print(f"\n\tFicha de {lista}")
             self.print_pokemon(dato)
 
     def list_poke_tipo(self):
@@ -151,39 +133,29 @@ class PokeApi:
         print(Title)
 
         detail = "type"
-        tipo = input("\tIngrese algun Tipo Ej.[]: ")
 
-        while int(tipo) > 8:
-            tipo = input(
-                "\tLa opcion no es correcta, vuelva a ingresar el tipo Ej.[]: ")
+        filtro = self.obtener_filtro_pokemon(detail)
+        tipo = input(f"\tIngrese algun Tipo Ej.{filtro[5:11]}: ")
 
         detail_tipo = detail + "/" + tipo
         lista_tipo = self.obtener_pokemon(detail_tipo)
 
-        resul_pokemons = []
         for pokemon in lista_tipo["pokemon"]:
-            if pokemon['name'] in self.lista_name_pokemons:
+            if pokemon['pokemon']['name'] in self.lista_name_pokemons:
                 poke = self.obtener_pokemon(self.detail_pokemon + "/" + pokemon['pokemon']['name'])
-                resul_pokemons.append({
-                    "name": pokemon['name'],
-                    "ability": [abiliy['ability']['name'] for abiliy in poke['abilities']],
-                    "url_imagen": poke['sprites']['front_default']
-                })
-
-        for pokemon in resul_pokemons:
-            self.print_pokemon(pokemon)
+                self.print_pokemon(poke)
 
         self._continuar()
 
     def print_pokemon(self, dato):
-
-        print("-"*20)
-        print(f'Nombre: {dato["name"]}')
-        print("Habilidades: ")
+        print("\t", end="")
+        print(f"-" * (len(dato["name"]) + 9))
+        print(f'\n\tNombre: {dato["name"]}')
+        print("\tHabilidades: ")
         for i, var in enumerate(dato["abilities"], start=1):
-            print(f'{i}) {var["ability"]["name"]}')
-        print(f'Url-imagen: {dato["sprites"]["front_default"]}')
-        print("-"*20)
+            print(f'\t  {i}) {var["ability"]["name"]}')
+        print(f'\tUrl-imagen: {dato["sprites"]["front_default"]}')
+        print("\t---"*10)
 
     def _continuar(self):
         respuesta = input("\nDesea continuar? S/N: ")
@@ -213,7 +185,7 @@ def run():
         if opcion == 1:
             pokeAPi.list_poke_generacion()
         elif opcion == 2:
-            pass
+            pokeAPi.list_poke_forma()
         elif opcion == 3:
             Title = '''
             ||||||||||||||||||||||||||||||||||||||||||||||
@@ -261,7 +233,7 @@ def run():
             
             pokeAPi.list_poke_habitad(endpoint, habitad)
         elif opcion == 5:
-            pass
+            pokeAPi.list_poke_tipo()
         elif opcion == 6:
             break
         else:
