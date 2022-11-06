@@ -127,21 +127,20 @@ class Libro:
         print(Title["4"])
 
         if len(self._lista_libros) >= 1:
-            num_libro = input(f"\nDigite el número del libro a eliminar 1 hasta el {len(self._lista_libros)}: ")
+            num_libro = input(f"\nDigite el número del libro a eliminar: ")
 
-            filtro = [str(i) for i in range(1, len(self._lista_libros) + 1)]
-        
+            filtro = [libro['id'] for libro in self._lista_libros]
+
             while num_libro not in filtro:
-                num_libro = input(f"Número de Libro incorrecto. Ingresa nuevamente tu respuesta del 1 hasta el {len(self._lista_libros)}: ")
+                num_libro = input(f"El Libro no existe. Digite nuevamente: ")
         else:
             print("\tDatos vacíos, debe de Leer el Libro antes de Eliminar (Opción 1)")
             return self._continuar()
 
         index = [i for i, libro in enumerate(self._lista_libros) if libro["id"] == num_libro]
         
-        del self._lista_libros[int(index[0])]
+        del self._lista_libros[index[0]]
         self._libros_eliminados.append(num_libro)
-
 
         print(f"\n\tMensaje: Se ha eliminado el Libro {num_libro} correctamente!!!")
 
@@ -197,6 +196,11 @@ class Libro:
 
         if len(self._lista_libros) >= 1:
             num_autor = int(input("\nDigite la cantidad de autores: "))
+
+            filtro = [len(libro['autores'].split(',')) for libro in self._lista_libros]
+
+            while num_autor not in filtro:
+                num_autor = int(input(f"No existe el Libro con esa cantidad de Autores. Digite nuevamente: "))
         else:
             print("\tDatos vacíos, debe de Leer el Libro antes de Buscar (Opción 1)")
             return self._continuar()
@@ -301,14 +305,14 @@ def run():
             if respuesta.upper() == 'N':
                 break
         elif opcion == 3:
-            print(Title["2"]) 
+            print(Title["3"]) 
             
             while True:
                 try:
                     id = int(input("Ingrese Id: "))
                     break
                 except ValueError:
-                    print("Ingrese un Id correcto\n")
+                    print("Advertencia!: Ingrese un Id correcto\n")
                     
             titulo = input("Ingrese el título: ")
             genero = input("Ingrese el género: ")
