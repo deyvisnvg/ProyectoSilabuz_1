@@ -50,7 +50,7 @@ class PokeApi:
 
         while int(generation) > 8:
             generation = input(
-                "\tLa opcion no es correcta, vuelva a ingresar Ej.[1 al 8]: ")
+                "\tLa opcion no es correcta, vuelva a ingresar la generación Ej.[1 al 8]: ")
 
         detail_generation = detail + "/" + generation
         lista_generation = self.obtener_pokemon(detail_generation)
@@ -58,8 +58,7 @@ class PokeApi:
         resul_pokemons = []
         for pokemon in lista_generation["pokemon_species"]:
             if pokemon['name'] in self.lista_name_pokemons:
-                poke = self.obtener_pokemon(
-                    self.detail_pokemon + "/" + pokemon['name'])
+                poke = self.obtener_pokemon(self.detail_pokemon + "/" + pokemon['name'])
                 resul_pokemons.append({
                     "name": pokemon['name'],
                     "ability": [abiliy['ability']['name'] for abiliy in poke['abilities']],
@@ -72,51 +71,108 @@ class PokeApi:
         self._continuar()
 
     def list_poke_forma(self):
-        pass
+        Title = '''
+        |||||||||||||||||||||||||||||||||||||||||
+        ||||    LISTAR POKEMONS POR FORMA    ||||
+        |||||||||||||||||||||||||||||||||||||||||
+        '''
+        print(Title)
 
-    def list_poke_habilidad(self,endpoint ,habilidad):
+        detail = "pokemon-shape"
+        forma = input("\tIngrese alguna forma Ej.[]: ")
+
+        while int(forma) > 8:
+            forma = input(
+                "\tLa opcion no es correcta, vuelva a ingresar la forma Ej.[]: ")
+
+        detail_forma = detail + "/" + forma
+        lista_forma = self.obtener_pokemon(detail_forma)
+
+        resul_pokemons = []
+        for pokemon in lista_forma["pokemon_species"]:
+            if pokemon['name'] in self.lista_name_pokemons:
+                poke = self.obtener_pokemon(self.detail_pokemon + "/" + pokemon['name'])
+                resul_pokemons.append({
+                    "name": pokemon['name'],
+                    "ability": [abiliy['ability']['name'] for abiliy in poke['abilities']],
+                    "url_imagen": poke['sprites']['front_default']
+                })
+
+        for pokemon in resul_pokemons:
+            self.print_pokemon(pokemon)
+
+        self._continuar()
+
+    def list_poke_habilidad(self, endpoint, habilidad):
         response = requests.get(self.API + endpoint + "/" + habilidad)
         self.lista_pokemon = response.json()
         filtrado_habilidad = []
-        
+
         for nombre in self.lista_pokemon["pokemon"]:
             filtrado_habilidad.append(nombre["pokemon"]["name"])
-            
+
         for lista in filtrado_habilidad:
             response = requests.get(self.API + "pokemon/" + lista)
             dato = response.json()
             print(f"Ficha de {lista}")
             self.print_pokemon(dato)
 
-    def list_poke_habitad(self,endpoint ,habitad):
+    def list_poke_habitad(self, endpoint, habitad):
         response = requests.get(self.API + endpoint + "/" + habitad)
         self.lista_pokemon = response.json()
         filtrado_habitad = []
-        
+
         for habi in self.lista_pokemon["pokemon_species"]:
             filtrado_habitad.append(habi["name"])
-        
+
         for lista in filtrado_habitad:
             response = requests.get(self.API + "pokemon/" + lista)
             dato = response.json()
             print(f"Ficha de {lista}")
             self.print_pokemon(dato)
 
-
     def list_poke_tipo(self):
-        pass
+        Title = '''
+        ||||||||||||||||||||||||||||||||||||||||
+        ||||    LISTAR POKEMONS POR TIPO    ||||
+        ||||||||||||||||||||||||||||||||||||||||
+        '''
+        print(Title)
 
-    def print_pokemon(self,dato):
-        
+        detail = "type"
+        tipo = input("\tIngrese algun Tipo Ej.[]: ")
+
+        while int(tipo) > 8:
+            tipo = input(
+                "\tLa opcion no es correcta, vuelva a ingresar el tipo Ej.[]: ")
+
+        detail_tipo = detail + "/" + tipo
+        lista_tipo = self.obtener_pokemon(detail_tipo)
+
+        resul_pokemons = []
+        for pokemon in lista_tipo["pokemon"]:
+            if pokemon['name'] in self.lista_name_pokemons:
+                poke = self.obtener_pokemon(self.detail_pokemon + "/" + pokemon['pokemon']['name'])
+                resul_pokemons.append({
+                    "name": pokemon['name'],
+                    "ability": [abiliy['ability']['name'] for abiliy in poke['abilities']],
+                    "url_imagen": poke['sprites']['front_default']
+                })
+
+        for pokemon in resul_pokemons:
+            self.print_pokemon(pokemon)
+
+        self._continuar()
+
+    def print_pokemon(self, dato):
+
         print("-"*20)
         print(f'Nombre: {dato["name"]}')
         print("Habilidades: ")
-        for i,var in enumerate(dato["abilities"], start=1):
+        for i, var in enumerate(dato["abilities"], start=1):
             print(f'{i}) {var["ability"]["name"]}')
-        # for var in dato["sprites"]:
-        #     print(var["front_default"])
         print("-"*20)
-        
+
     def _continuar(self):
         respuesta = input("\nDesea continuar? S/N: ")
 
@@ -131,7 +187,7 @@ def run():
     print(Bienvenida)
 
     API = "https://pokeapi.co/api/v2/"
-    
+
     endpoint = ""
 
     pokeAPi = PokeApi(API)
@@ -153,7 +209,7 @@ def run():
             ||||||||||||||||||||||||||||||||||||||||||||||
             '''
             print(Title)
-            
+
             habilidad = input("Ingrese una habilidad: ")
             endpoint = "ability"
             pokeAPi.list_poke_habilidad(endpoint, habilidad)
@@ -164,7 +220,7 @@ def run():
             ||||||||||||||||||||||||||||||||||||||||||||||
             '''
             print(Title)
-            
+
             habitad = input("Ingrese una habitad: ")
             print("\n")
             print("-"*20)
