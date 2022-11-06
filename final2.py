@@ -15,6 +15,33 @@ Menu = '''
     [6]: Salir.
 '''
 
+Title = {
+    "generacion": '''
+        ||||||||||||||||||||||||||||||||||||||||||||||
+        ||||    LISTAR POKEMONS POR GENERACIÓN    ||||
+        ||||||||||||||||||||||||||||||||||||||||||||||
+        ''',
+    "forma": '''
+        |||||||||||||||||||||||||||||||||||||||||
+        ||||    LISTAR POKEMONS POR FORMA    ||||
+        |||||||||||||||||||||||||||||||||||||||||
+        ''',
+    "habilidad": '''
+            ||||||||||||||||||||||||||||||||||||||||||||||
+            ||||     LISTAR POKEMON POR HABILIDAD     ||||
+            ||||||||||||||||||||||||||||||||||||||||||||||
+            ''',
+    "habitat": '''
+            ||||||||||||||||||||||||||||||||||||||||||||||
+            ||||      LISTAR POKEMON POR HABITAD      ||||
+            ||||||||||||||||||||||||||||||||||||||||||||||
+            ''',
+    "tipo": '''
+        ||||||||||||||||||||||||||||||||||||||||
+        ||||    LISTAR POKEMONS POR TIPO    ||||
+        ||||||||||||||||||||||||||||||||||||||||
+        '''
+}
 
 class PokeApi:
     detail_pokemon = "pokemon"
@@ -49,17 +76,12 @@ class PokeApi:
         return lista_pokemon
 
     def list_poke_generacion(self):
-        Title = '''
-        ||||||||||||||||||||||||||||||||||||||||||||||
-        ||||    LISTAR POKEMONS POR GENERACIÓN    ||||
-        ||||||||||||||||||||||||||||||||||||||||||||||
-        '''
-        print(Title)
+        print(Title["generacion"])
 
         detail = "generation"
         generation = input("\tIngrese alguna generación Ej.[1 al 8]: ")
 
-        while int(generation) > 8:
+        while generation not in ('1','2','3','4','5','6','7','8'):
             generation = input(
                 "\tLa opcion no es correcta, vuelva a ingresar la generación Ej.[1 al 8]: ")
 
@@ -74,17 +96,15 @@ class PokeApi:
         self._continuar()
 
     def list_poke_forma(self):
-        Title = '''
-        |||||||||||||||||||||||||||||||||||||||||
-        ||||    LISTAR POKEMONS POR FORMA    ||||
-        |||||||||||||||||||||||||||||||||||||||||
-        '''
-        print(Title)
+        print(Title["forma"])
 
         detail = "pokemon-shape"
 
         filtro = self.obtener_filtro_pokemon(detail)
         forma = input(f"\tIngrese alguna forma Ej.{filtro[5:11]}: ")
+        print("\n")
+        while forma not in filtro:
+                forma = input("Forma incorrecta, ingrese nuevamente: ")
 
         detail_forma = detail + "/" + forma
         lista_forma = self.obtener_pokemon(detail_forma)
@@ -125,18 +145,16 @@ class PokeApi:
             self.print_pokemon(dato)
 
     def list_poke_tipo(self):
-        Title = '''
-        ||||||||||||||||||||||||||||||||||||||||
-        ||||    LISTAR POKEMONS POR TIPO    ||||
-        ||||||||||||||||||||||||||||||||||||||||
-        '''
-        print(Title)
+        print(Title["tipo"])
 
         detail = "type"
 
         filtro = self.obtener_filtro_pokemon(detail)
         tipo = input(f"\tIngrese algun Tipo Ej.{filtro[5:11]}: ")
-
+        print("\n")
+        while tipo not in filtro:
+                tipo = input("Tipo incorrecto, ingrese nuevamente: ")
+                
         detail_tipo = detail + "/" + tipo
         lista_tipo = self.obtener_pokemon(detail_tipo)
 
@@ -187,13 +205,9 @@ def run():
         elif opcion == 2:
             pokeAPi.list_poke_forma()
         elif opcion == 3:
-            Title = '''
-            ||||||||||||||||||||||||||||||||||||||||||||||
-            ||||     LISTAR POKEMON POR HABILIDAD     ||||
-            ||||||||||||||||||||||||||||||||||||||||||||||
-            '''
-            print(Title)
+            print(Title["habilidad"])
             endpoint = "ability"
+            
             
             filtro = pokeAPi.obtener_filtro_pokemon(endpoint)
             count = 0
@@ -203,17 +217,17 @@ def run():
                 if i == count + 5:
                     print("\n")
                     count +=5
-                print(f"{i}: {resultado}", end=" ")
+                print(f"\t{i}: {resultado}", end=" ")
             
             habilidad = input("\n\nIngrese una habilidad: ")
+            while habilidad not in filtro:
+                habilidad = input("\n\nHabilidad incorrecta, intente nuevamente: ")
+                
             pokeAPi.list_poke_habilidad(endpoint, habilidad)
+            
+            
         elif opcion == 4:
-            Title = '''
-            ||||||||||||||||||||||||||||||||||||||||||||||
-            ||||      LISTAR POKEMON POR HABITAD      ||||
-            ||||||||||||||||||||||||||||||||||||||||||||||
-            '''
-            print(Title)
+            print(Title["habitat"])
             
             endpoint = "pokemon-habitat"
             
@@ -225,9 +239,11 @@ def run():
                 if i == count + 5:
                     print("\n")
                     count +=5
-                print(f"{i}: {resultado}", end=" ")
+                print(f"\t{i}: {resultado}", end=" ")
             
             habitad = input("\n\nIngrese una habitad: ")
+            while habitad not in filtro:
+                habitad = input("\n\nHabilidad incorrecta, intente nuevamente: ")
             print("\n")
             print("-"*20)
             
