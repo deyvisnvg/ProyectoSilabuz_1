@@ -31,17 +31,48 @@ class PokeApi:
     def list_poke_forma(self):
         pass
 
-    def list_poke_habilidad(self):
-        pass
+    def list_poke_habilidad(self,endpoint ,habilidad):
+        response = requests.get(self.API + endpoint + "/" + habilidad)
+        self.lista_pokemon = response.json()
+        filtrado_habilidad = []
+        
+        for nombre in self.lista_pokemon["pokemon"]:
+            filtrado_habilidad.append(nombre["pokemon"]["name"])
+            
+        for lista in filtrado_habilidad:
+            response = requests.get(self.API + "pokemon/" + lista)
+            dato = response.json()
+            print(f"Ficha de {lista}")
+            self.print_pokemon(dato)
 
-    def list_poke_hibitad(self):
-        pass
+    def list_poke_habitad(self,endpoint ,habitad):
+        response = requests.get(self.API + endpoint + "/" + habitad)
+        self.lista_pokemon = response.json()
+        filtrado_habitad = []
+        
+        for habi in self.lista_pokemon["pokemon_species"]:
+            filtrado_habitad.append(habi["name"])
+        
+        for lista in filtrado_habitad:
+            response = requests.get(self.API + "pokemon/" + lista)
+            dato = response.json()
+            print(f"Ficha de {lista}")
+            self.print_pokemon(dato)
+
 
     def list_poke_tipo(self):
         pass
 
-    def print_pokemon(self):
-        pass
+    def print_pokemon(self,dato):
+        
+        print("-"*20)
+        print(f'Nombre: {dato["name"]}')
+        print("Habilidades: ")
+        for i,var in enumerate(dato["abilities"], start=1):
+            print(f'{i}) {var["ability"]["name"]}')
+        # for var in dato["sprites"]:
+        #     print(var["front_default"])
+        print("-"*20)
         
     def _continuar(self):
         pass
@@ -51,6 +82,8 @@ def run():
     print(Bienvenida)
 
     API = "https://pokeapi.co/api/v2/"
+    
+    endpoint = ""
 
     pokeAPi = PokeApi(API)
 
@@ -64,9 +97,29 @@ def run():
         elif opcion == 2:
             pass
         elif opcion == 3:
-            pass
+            Title = '''
+            ||||||||||||||||||||||||||||||||||||||||||||||
+            ||||     LISTAR POKEMON POR HABILIDAD     ||||
+            ||||||||||||||||||||||||||||||||||||||||||||||
+            '''
+            print(Title)
+            
+            habilidad = input("Ingrese una habilidad: ")
+            endpoint = "ability"
+            pokeAPi.list_poke_habilidad(endpoint, habilidad)
         elif opcion == 4:
-            pass
+            Title = '''
+            ||||||||||||||||||||||||||||||||||||||||||||||
+            ||||      LISTAR POKEMON POR HABITAD      ||||
+            ||||||||||||||||||||||||||||||||||||||||||||||
+            '''
+            print(Title)
+            
+            habitad = input("Ingrese una habitad: ")
+            print("\n")
+            print("-"*20)
+            endpoint = "pokemon-habitat"
+            pokeAPi.list_poke_habitad(endpoint, habitad)
         elif opcion == 5:
             pass
         elif opcion == 6:
