@@ -269,7 +269,13 @@ def run():
             '''
             print(Title) 
             
-            id = input("Ingrese Id: ")
+            while True:
+                try:
+                    id = int(input("Ingrese Id: "))
+                    break
+                except ValueError:
+                    print("Ingrese un Id correcto\n")
+                    
             titulo = input("Ingrese el título: ")
             genero = input("Ingrese el género: ")
             isbn = input("Ingrese el ISBN: ")
@@ -316,7 +322,7 @@ def run():
             print("-"*20)
             
             lista_libros = libro._lista_libros
-            index = [i for i,libro in enumerate(lista_libros) if libro["id"] == id][0]
+            index = [i for i, libro in enumerate(lista_libros) if libro["id"] == id][0]
             
             libro.print_libros(lista_libros[index])
             
