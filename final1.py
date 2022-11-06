@@ -17,7 +17,56 @@ Menu = '''
     [8]: Buscar libros por número de autores.
     [9]: Editar o actualizar datos de un libro (título, género, ISBN, editorial y autores).
    [10]: Guardar libros en archivo de disco duro (.txt o csv).
+   [11]: Salir.
 '''
+
+Title = {
+    "2": '''
+        |||||||||||||||||||||||||||||
+        ||||    LISTAR LIBROS    ||||
+        |||||||||||||||||||||||||||||
+        ''',
+    "3": '''
+        ||||||||||||||||||||||||||||||
+        ||||    AGREGAR LIBRO     ||||
+        ||||||||||||||||||||||||||||||
+        ''',
+    "4": '''
+        ||||||||||||||||||||||||||||||
+        ||||    ELIMINAR LIBRO    ||||
+        ||||||||||||||||||||||||||||||
+        ''',
+    "5": '''
+        |||||||||||||||||||||||||||||||||||||||||||||||||||
+        ||||    BUSQUEDA DE LIBRO POR TITULO O ISBN    ||||
+        |||||||||||||||||||||||||||||||||||||||||||||||||||
+        ''',
+    "6": '''
+        |||||||||||||||||||||||||||||||||||||||||||||||||||
+        ||||       LIBROS ORDENADOS POR TITULO         ||||
+        |||||||||||||||||||||||||||||||||||||||||||||||||||
+        ''',
+    "7": '''
+        |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+        ||||    BUSQUEDA DE LIBRO POR AUTOR, EDITORIAL O GÉNERO    ||||
+        |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+        ''',
+    "8": '''
+        |||||||||||||||||||||||||||||||||||||||||||||||||||
+        ||||    BUSCAR LIBROS POR NUMERO DE AUTORES    ||||
+        |||||||||||||||||||||||||||||||||||||||||||||||||||
+        ''',
+    "9": '''
+        ||||||||||||||||||||||||||||||
+        ||||     EDITAR LIBRO     ||||
+        ||||||||||||||||||||||||||||||
+        ''',
+    "10": '''
+        ||||||||||||||||||||||||||||||
+        ||||    GUARDAR LIBRO    |||||
+        ||||||||||||||||||||||||||||||
+        ''',
+}
 
 
 class Libro:
@@ -47,16 +96,11 @@ class Libro:
         return self._continuar()
 
     def listar_libro(self):
-        Title = '''
-        |||||||||||||||||||||||||||||
-        ||||    LISTAR LIBROS    ||||
-        |||||||||||||||||||||||||||||
-        '''
-        print(Title)
+        print(Title["2"])
 
         try:
             for libro in self._lista_libros:
-                self.print_libros(libro)
+                print(self.print_libros(libro))
 
             return self._continuar()
 
@@ -80,17 +124,18 @@ class Libro:
                 
 
     def eliminar_libro(self):
-        num_libro = input(f"\nDigite el número del libro a eliminar 1 hasta el {len(self._lista_libros)}: ")
+        print(Title["4"])
 
-        # while num_libro not in (1,2,3):
-        #     num_libro = int(input("Debes responder 1, 2 ó 3. Ingresa nuevamente tu respuesta: "))
+        if len(self._lista_libros) >= 1:
+            num_libro = input(f"\nDigite el número del libro a eliminar 1 hasta el {len(self._lista_libros)}: ")
 
-        Title = '''
-        ||||||||||||||||||||||||||||||
-        ||||    ELIMINAR LIBRO    ||||
-        ||||||||||||||||||||||||||||||
-        '''
-        print(Title)
+            filtro = [str(i) for i in range(1, len(self._lista_libros) + 1)]
+        
+            while num_libro not in filtro:
+                num_libro = input(f"Número de Libro incorrecto. Ingresa nuevamente tu respuesta del 1 hasta el {len(self._lista_libros)}: ")
+        else:
+            print("\tDatos vacíos, debe de Leer el Libro antes de Eliminar (Opción 1)")
+            return self._continuar()
 
         index = [i for i, libro in enumerate(self._lista_libros) if libro["id"] == num_libro]
         
@@ -98,74 +143,73 @@ class Libro:
         self._libros_eliminados.append(num_libro)
 
 
-        print(f"\tMensaje: Se ha eliminado el Libro {num_libro} correctamente!!!")
+        print(f"\n\tMensaje: Se ha eliminado el Libro {num_libro} correctamente!!!")
 
         return self.leer_archivo()
 
 
     def buscar_libro(self):
-        Title = '''
-        |||||||||||||||||||||||||||||||||||||||||||||||||||
-        ||||    BUSQUEDA DE LIBRO POR TITULO O ISBN    ||||
-        |||||||||||||||||||||||||||||||||||||||||||||||||||
-        '''
-        print(Title)
-        param = input("Ingrese el libro a buscar por título o ISBN: ")
+        print(Title["5"])
+
+        if len(self._lista_libros) >= 1:
+            param = input("Ingrese el libro a buscar por título o ISBN: ")
+        else:
+            print("\tDatos vacíos, debe de Leer el Libro antes de Buscar (Opción 1)")
+            return self._continuar()
+
         for linea in self._lista_libros:
             if param == linea["titulo"] or param == linea["ISBN"]:     
-                self.print_libros(linea)
+                print(self.print_libros(linea))
                 
         return self._continuar()
                 
     def ordenar_titulo(self):
-        Title = '''
-        |||||||||||||||||||||||||||||||||||||||||||||||||||
-        ||||       LIBROS ORDENADOS POR TITULO         ||||
-        |||||||||||||||||||||||||||||||||||||||||||||||||||
-        '''
-        print(Title)
+        print(Title["6"])
+
+        if len(self._lista_libros) == 0:
+            print("\tDatos vacíos, debe de Leer el Libro antes de Ordenar (Opción 1)")
+            return self._continuar()
+
         lista_aux = sorted(self._lista_libros, key=lambda libro:libro["titulo"])
         for libro in lista_aux:
-            self.print_libros(libro)
+            print(self.print_libros(libro))
         
         return self._continuar()
 
     def buscar_libro2(self):
-        Title = '''
-        ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-        ||||    BUSQUEDA DE LIBRO POR AUTOR, EDITOR O GÉNERO    ||||
-        ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-        '''
-        print(Title)
-        param = input("Ingrese el libro a buscar por autor, editor o género: ")
+        print(Title["7"])
+
+        if len(self._lista_libros) >= 1:
+            param = input("Ingrese el libro a buscar por autor, editorial o género: ")
+        else:
+            print("\tDatos vacíos, debe de Leer el Libro antes de Buscar (Opción 1)")
+            return self._continuar()
+
         for linea in self._lista_libros:
             autor_libro = linea["autores"].split(",")
             if param in autor_libro or param == linea["editorial"] or param == linea["genero"]:     
-                self.print_libros(linea)
+                print(self.print_libros(linea))
                 
         return self._continuar()
 
     def buscar_libro3(self):
-        num_autor = int(input("\nDigite la cantidad de autores: "))
+        print(Title["8"])
 
-        Title = '''
-        |||||||||||||||||||||||||||||||||||||||||||||||||||
-        ||||    BUSCAR LIBROS POR NUMERO DE AUTORES    ||||
-        |||||||||||||||||||||||||||||||||||||||||||||||||||
-        '''
-        print(Title)
+        if len(self._lista_libros) >= 1:
+            num_autor = int(input("\nDigite la cantidad de autores: "))
+        else:
+            print("\tDatos vacíos, debe de Leer el Libro antes de Buscar (Opción 1)")
+            return self._continuar()
 
         for libro in self._lista_libros:
             count_autor = len(libro['autores'].split(','))
             
             if count_autor == num_autor:
-                self.print_libros(libro)
+                print(self.print_libros(libro))
 
         return self._continuar()
 
     def editar_libro(self,index,lista_libros):
-        #self.leer_archivo()
-        #index = [i for i,libro in enumerate(self._lista_libros) if libro["id"] == self.id][0]
         self._lista_libros = lista_libros
         
         if self.titulo != "":
@@ -191,7 +235,7 @@ class Libro:
         print("\nDatos modificados:")
         print("-"*20,"\n")
         
-        self.print_libros(self._lista_libros[index])
+        print(self.print_libros(self._lista_libros[index]))
         
         return self._continuar()
 
@@ -213,12 +257,7 @@ class Libro:
                 for libro in self._lista_libros:
                     file.write(self.print_libros(libro))
         
-        Title = '''
-        ||||||||||||||||||||||||||||||
-        ||||    GUARDAR LIBRO    |||||
-        ||||||||||||||||||||||||||||||
-        '''
-        print(Title)
+        print(Title["10"])
         print(f"Mensaje: Los Libros se guardaron correctamente!!!")
 
         return self._continuar()
@@ -231,7 +270,7 @@ class Libro:
                     f"\tEditorial: {libro['editorial']}\n"
                     f"\tAuthors: {libro['autores']}\n")
         espacio = "\t**********" * 5
-        print(titulo + cuerpo + espacio)
+        # print(titulo + cuerpo + espacio)
         
         return titulo + cuerpo + espacio
         
@@ -262,12 +301,7 @@ def run():
             if respuesta.upper() == 'N':
                 break
         elif opcion == 3:
-            Title = '''
-            ||||||||||||||||||||||||||||||
-            ||||    AGREGAR LIBRO     ||||
-            ||||||||||||||||||||||||||||||
-            '''
-            print(Title) 
+            print(Title["2"]) 
             
             id = input("Ingrese Id: ")
             titulo = input("Ingrese el título: ")
@@ -304,21 +338,16 @@ def run():
         elif opcion == 8:
             libro.buscar_libro3()
         elif opcion == 9:
-            Title = '''
-            ||||||||||||||||||||||||||||||
-            ||||     EDITAR LIBRO     ||||
-            ||||||||||||||||||||||||||||||
-            '''
-            print(Title)
+            print(Title["9"])
             
             id = input("Ingrese ID del libro a modificar: ")
             print("\nDatos previos:")
             print("-"*20)
             
             lista_libros = libro._lista_libros
-            index = [i for i,libro in enumerate(lista_libros) if libro["id"] == id][0]
+            index = [i for i, libro in enumerate(lista_libros) if libro["id"] == id][0]
             
-            libro.print_libros(lista_libros[index])
+            print(libro.print_libros(lista_libros[index]))
             
             print("\nIngrese nuevos datos:")
             print("-"*20,"\n")
@@ -337,6 +366,8 @@ def run():
                 break
             
         elif opcion == 10:
+            libro.guardar_libro()
+        elif opcion == 11:
             libro.guardar_libro()
         else:
             print("La opcion no es correcta, vuelva a selecionar: ")
