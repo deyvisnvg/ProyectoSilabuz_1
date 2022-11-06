@@ -30,6 +30,17 @@ class PokeApi:
 
         for pokemon in lista_pokemons['results']:
             self.lista_name_pokemons.append(pokemon['name'])
+    
+    def obtener_filtro_pokemon(self, endpoint):
+        lista_pokemons = self.obtener_pokemon(endpoint)
+        
+        lista_name_filtro = []
+        
+        for resul in lista_pokemons['results']:
+            lista_name_filtro.append(resul['name'])
+        
+        return lista_name_filtro
+        
 
     def obtener_pokemon(self, detail_pokemon):
         response = requests.get(self.API + detail_pokemon)
@@ -75,31 +86,28 @@ class PokeApi:
         pass
 
     def list_poke_habilidad(self,endpoint ,habilidad):
-        response = requests.get(self.API + endpoint + "/" + habilidad)
-        self.lista_pokemon = response.json()
+        lista_pokemon = self.obtener_pokemon(endpoint + "/" + habilidad)
         filtrado_habilidad = []
         
-        for nombre in self.lista_pokemon["pokemon"]:
+        for nombre in lista_pokemon["pokemon"]:
             filtrado_habilidad.append(nombre["pokemon"]["name"])
             
-        for lista in filtrado_habilidad:
-            response = requests.get(self.API + "pokemon/" + lista)
-            dato = response.json()
-            print(f"Ficha de {lista}")
+        for nom_poke in filtrado_habilidad:
+            dato = self.obtener_pokemon(self.detail_pokemon + "/"+ nom_poke)
+            print(f"Ficha de {nom_poke}")
             self.print_pokemon(dato)
 
     def list_poke_habitad(self,endpoint ,habitad):
-        response = requests.get(self.API + endpoint + "/" + habitad)
-        self.lista_pokemon = response.json()
+        
+        lista_pokemon = self.obtener_pokemon(endpoint + "/" + habitad)
         filtrado_habitad = []
         
-        for habi in self.lista_pokemon["pokemon_species"]:
+        for habi in lista_pokemon["pokemon_species"]:
             filtrado_habitad.append(habi["name"])
         
-        for lista in filtrado_habitad:
-            response = requests.get(self.API + "pokemon/" + lista)
-            dato = response.json()
-            print(f"Ficha de {lista}")
+        for nom_poke in filtrado_habitad:
+            dato = self.obtener_pokemon(self.detail_pokemon + "/" + nom_poke)
+            print(f"Ficha de {nom_poke}")
             self.print_pokemon(dato)
 
 
@@ -113,8 +121,7 @@ class PokeApi:
         print("Habilidades: ")
         for i,var in enumerate(dato["abilities"], start=1):
             print(f'{i}) {var["ability"]["name"]}')
-        # for var in dato["sprites"]:
-        #     print(var["front_default"])
+        print(f'Url-imagen: {dato["sprites"]["front_default"]}')
         print("-"*20)
         
     def _continuar(self):
@@ -153,9 +160,19 @@ def run():
             ||||||||||||||||||||||||||||||||||||||||||||||
             '''
             print(Title)
-            
-            habilidad = input("Ingrese una habilidad: ")
             endpoint = "ability"
+            
+            filtro = pokeAPi.obtener_filtro_pokemon(endpoint)
+            count = 0
+            print("Posibles valores a ingresar")
+            print("*"*28 , "\n")
+            for i, resultado in enumerate(filtro, start=1):
+                if i == count + 5:
+                    print("\n")
+                    count +=5
+                print(f"{i}: {resultado}", end=" ")
+            
+            habilidad = input("\n\nIngrese una habilidad: ")
             pokeAPi.list_poke_habilidad(endpoint, habilidad)
         elif opcion == 4:
             Title = '''
@@ -165,10 +182,22 @@ def run():
             '''
             print(Title)
             
-            habitad = input("Ingrese una habitad: ")
+            endpoint = "pokemon-habitat"
+            
+            filtro = pokeAPi.obtener_filtro_pokemon(endpoint)
+            count = 0
+            print("Posibles valores a ingresar")
+            print("*"*28 , "\n")
+            for i, resultado in enumerate(filtro, start=1):
+                if i == count + 5:
+                    print("\n")
+                    count +=5
+                print(f"{i}: {resultado}", end=" ")
+            
+            habitad = input("\n\nIngrese una habitad: ")
             print("\n")
             print("-"*20)
-            endpoint = "pokemon-habitat"
+            
             pokeAPi.list_poke_habitad(endpoint, habitad)
         elif opcion == 5:
             pass
