@@ -116,7 +116,7 @@ class PokeApi:
 
     def print_pokemon(self,dato):
         
-        print("-"*20)
+        print(f"-"*20)
         print(f'Nombre: {dato["name"]}')
         print("Habilidades: ")
         for i,var in enumerate(dato["abilities"], start=1):
@@ -162,6 +162,7 @@ def run():
             print(Title)
             endpoint = "ability"
             
+            
             filtro = pokeAPi.obtener_filtro_pokemon(endpoint)
             count = 0
             print("Posibles valores a ingresar")
@@ -170,10 +171,15 @@ def run():
                 if i == count + 5:
                     print("\n")
                     count +=5
-                print(f"{i}: {resultado}", end=" ")
+                print(f"\t{i}: {resultado}", end=" ")
             
             habilidad = input("\n\nIngrese una habilidad: ")
+            while habilidad not in filtro:
+                habilidad = input("\n\nHabilidad incorrecta, intente nuevamente: ")
+                
             pokeAPi.list_poke_habilidad(endpoint, habilidad)
+            
+            
         elif opcion == 4:
             Title = '''
             ||||||||||||||||||||||||||||||||||||||||||||||
@@ -192,9 +198,11 @@ def run():
                 if i == count + 5:
                     print("\n")
                     count +=5
-                print(f"{i}: {resultado}", end=" ")
+                print(f"\t{i}: {resultado}", end=" ")
             
             habitad = input("\n\nIngrese una habitad: ")
+            while habitad not in filtro:
+                habitad = input("\n\nHabilidad incorrecta, intente nuevamente: ")
             print("\n")
             print("-"*20)
             
