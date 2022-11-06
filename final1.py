@@ -70,7 +70,9 @@ Title = {
 
 
 class Libro:
-    #
+    nombre_csv = "Libros.csv"
+    nombre_txt = "Libros.txt"
+
     def __init__(self, id, titulo, genero, ISBN, editorial, autores):
         self.id = id
         self.titulo = titulo
@@ -79,12 +81,29 @@ class Libro:
         self.editorial = editorial
         self.autores = autores
         self._lista_libros = []
-        self.__nombre_csv = "Libros.csv"
         self._libros_eliminados = []
+        self.archivo_actual = ""
 
-    def leer_archivo(self):
+    def leer_archivo(self, estado):
+        if estado == 1:
+            if len(self._lista_libros) >= 1:
+                print(f"\n\tMensaje: El archivo {self.archivo_actual} ya fue cargado!...\n")
+                return self._continuar()
+
+            leer = input("Desea leer el libro por 1:txt o 2:csv?: ")
+
+            while leer not in ('1', '2'):
+                leer = input("Opción incorrecta!. Desea leer el libro por 1:txt o 2:csv?: ")
+            
+            if leer == '1':
+                archivo = self.nombre_txt
+            elif leer == '2':
+                archivo = self.nombre_csv
+            
+            self.archivo_actual = archivo
+
         self._lista_libros = []
-        with open(self.__nombre_csv, "r") as file:
+        with open(self.archivo_actual, 'r') as file:
             reader = csv.DictReader(file)
 
             for libro in reader:
@@ -107,12 +126,14 @@ class Libro:
         except:
             print(f"\tMensaje: No es posible continuar listando los libros ya que se encuentra incompleto")
 
-    def agregar_libro(self, libros_eliminados):
+    def agregar_libro(self, libros_eliminados, archivo_actual):
+        print(self.archivo_actual)
+        self.archivo_actual = archivo_actual
         self._libros_eliminados = libros_eliminados
         lista_libro = [self.id,self.titulo,self.genero,self.ISBN,self.editorial,self.autores]
         respuesta = input("\nEsta seguro que quiere agregar un nuevo libro(S/N): ")
         try:
-            with open(self.__nombre_csv,'a',newline='') as nuevo_libro:
+            with open(self.archivo_actual, 'a', newline='') as nuevo_libro:
                 if respuesta.upper() == "S":
                     objeto_libro = csv.writer(nuevo_libro)
                     objeto_libro.writerow(lista_libro)
@@ -120,8 +141,7 @@ class Libro:
         except Exception as ex:
             print("Mensaje: Ha ocurrido un error", ex)
         
-        return self.leer_archivo()       
-                
+        return self.leer_archivo(0)       
 
     def eliminar_libro(self):
         print(Title["4"])
@@ -144,8 +164,7 @@ class Libro:
 
         print(f"\n\tMensaje: Se ha eliminado el Libro {num_libro} correctamente!!!")
 
-        return self.leer_archivo()
-
+        return self._continuar()
 
     def buscar_libro(self):
         print(Title["5"])
@@ -228,7 +247,7 @@ class Libro:
             self._lista_libros[index]["autores"] = self.autores
         
         if len(self._lista_libros) > 0:
-            with open(self.__nombre_csv, 'w') as file:
+            with open(self.nombre_csv, 'w') as file:
                 colum = list(self._lista_libros[0].keys())
 
                 writer = csv.DictWriter(file, fieldnames=colum)
@@ -297,7 +316,8 @@ def run():
         opcion = int(input("Seleccione una opcion: "))
 
         if opcion == 1:
-            respuesta = libro.leer_archivo()
+            estado = 1
+            respuesta = libro.leer_archivo(1)
             if respuesta.upper() == 'N':
                 break
         elif opcion == 2:
@@ -305,29 +325,40 @@ def run():
             if respuesta.upper() == 'N':
                 break
         elif opcion == 3:
-            print(Title["3"]) 
-            
-            while True:
-                try:
-                    id = int(input("Ingrese Id: "))
-                    break
-                except ValueError:
-                    print("Advertencia!: Ingrese un Id correcto\n")
-                    
-            titulo = input("Ingrese el título: ")
-            genero = input("Ingrese el género: ")
-            isbn = input("Ingrese el ISBN: ")
-            editorial = input("Ingrese la editorial: ")
-            autores = input("Ingrese los autores separados por comas: ")
-            
+            print(Title["3"])
+
             libros_eliminados = libro._libros_eliminados
-            
-            lista = [id, titulo, genero, isbn, editorial, autores]     
-            libro = Libro(*lista)
-            
-            respuesta = libro.agregar_libro(libros_eliminados)
-            if respuesta.upper() == 'N':
-                break
+            lista_libros = libro._lista_libros
+            archivo_actual = libro.archivo_actual
+
+            if len(lista_libros) >= 1:
+                while True:
+                    try:
+                        id = int(input("Ingrese Id: "))
+                        break
+                    except ValueError:
+                        print("Advertencia!: Ingrese un Id correcto\n")
+                        
+                titulo = input("Ingrese el título: ")
+                genero = input("Ingrese el género: ")
+                isbn = input("Ingrese el ISBN: ")
+                editorial = input("Ingrese la editorial: ")
+                autores = input("Ingrese los autores separados por comas: ")
+                
+                
+                
+                lista = [id, titulo, genero, isbn, editorial, autores]     
+                libro = Libro(*lista)
+                
+                respuesta = libro.agregar_libro(libros_eliminados, archivo_actual)
+                if respuesta.upper() == 'N':
+                    break
+            else:
+                print(f"\n\tIMPORTANTE!: Es necesario realizar la opción 1.\n")
+                print(f"\t\t     Para obtener el archivo y poder agregar un Libro!\n")
+                continuar = libro._continuar()
+                if continuar.upper() == 'N':
+                    break
             
         elif opcion == 4:
             respuesta = libro.eliminar_libro()
@@ -349,31 +380,39 @@ def run():
             libro.buscar_libro3()
         elif opcion == 9:
             print(Title["9"])
-            
-            id = input("Ingrese ID del libro a modificar: ")
-            print("\nDatos previos:")
-            print("-"*20)
-            
+
             lista_libros = libro._lista_libros
-            index = [i for i, libro in enumerate(lista_libros) if libro["id"] == id][0]
-            
-            print(libro.print_libros(lista_libros[index]))
-            
-            print("\nIngrese nuevos datos:")
-            print("-"*20,"\n")
-            
-            titulo = input("Ingrese el nuevo título: ")
-            genero = input("Ingrese el nuevo género: ")
-            isbn = input("Ingrese el nuevo ISBN: ")
-            editorial = input("Ingrese la nueva editorial: ")
-            autores = input("Ingrese los nuevos autores separados por comas: ")
-            
-            lista = [id, titulo, genero, isbn, editorial, autores]
-            libro = Libro(*lista)
-            
-            respuesta = libro.editar_libro(index,lista_libros)
-            if respuesta.upper() == 'N':
-                break
+
+            if len(lista_libros) >= 1:
+                id = input("Ingrese ID del libro a modificar: ")
+                print("\nDatos previos:")
+                print("-"*20)
+                
+                index = [i for i, libro in enumerate(lista_libros) if libro["id"] == id][0]
+                
+                print(libro.print_libros(lista_libros[index]))
+                
+                print("\nIngrese nuevos datos:")
+                print("-"*20,"\n")
+                
+                titulo = input("Ingrese el nuevo título: ")
+                genero = input("Ingrese el nuevo género: ")
+                isbn = input("Ingrese el nuevo ISBN: ")
+                editorial = input("Ingrese la nueva editorial: ")
+                autores = input("Ingrese los nuevos autores separados por comas: ")
+                
+                lista = [id, titulo, genero, isbn, editorial, autores]
+                libro = Libro(*lista)
+                
+                respuesta = libro.editar_libro(index,lista_libros)
+                if respuesta.upper() == 'N':
+                    break
+            else:
+                print(f"\n\tIMPORTANTE!: Es necesario realizar la opción 1.\n")
+                print(f"\t\t     Para obtener la Lista de Libros y poder editarlo!\n")
+                continuar = libro._continuar()
+                if continuar.upper() == 'N':
+                    breaks
             
         elif opcion == 10:
             libro.guardar_libro()
