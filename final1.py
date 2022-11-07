@@ -129,6 +129,8 @@ class Libro:
     def agregar_libro(self, libros_eliminados, archivo_actual):
         self.archivo_actual = archivo_actual
         self._libros_eliminados = libros_eliminados
+        estado = 0
+        
         lista_libro = [self.id,self.titulo,self.genero,self.ISBN,self.editorial,self.autores]
         respuesta = input("\nEsta seguro que quiere agregar un nuevo libro(S/N): ")
         try:
@@ -140,7 +142,7 @@ class Libro:
         except Exception as ex:
             print("Mensaje: Ha ocurrido un error", ex)
         
-        return self.leer_archivo(0)       
+        return self.leer_archivo(estado)       
 
     def eliminar_libro(self):
         print(Title["4"])
@@ -231,8 +233,9 @@ class Libro:
 
         return self._continuar()
 
-    def editar_libro(self,index,lista_libros):
+    def editar_libro(self,index,lista_libros, archivo_actual):
         self._lista_libros = lista_libros
+        self.archivo_actual = archivo_actual
         
         if self.titulo != "":
             self._lista_libros[index]["titulo"] = self.titulo
@@ -246,7 +249,7 @@ class Libro:
             self._lista_libros[index]["autores"] = self.autores
         
         if len(self._lista_libros) > 0:
-            with open(self.nombre_csv, 'w') as file:
+            with open(self.archivo_actual, 'w') as file:
                 colum = list(self._lista_libros[0].keys())
 
                 writer = csv.DictWriter(file, fieldnames=colum)
@@ -316,7 +319,7 @@ def run():
 
         if opcion == 1:
             estado = 1
-            respuesta = libro.leer_archivo(1)
+            respuesta = libro.leer_archivo(estado)
             if respuesta.upper() == 'N':
                 break
         elif opcion == 2:
@@ -387,6 +390,7 @@ def run():
             print(Title["9"])
 
             lista_libros = libro._lista_libros
+            archivo_actual = libro.archivo_actual
 
             if len(lista_libros) >= 1:
                 id = input("Ingrese ID del libro a modificar: ")
@@ -409,7 +413,7 @@ def run():
                 lista = [id, titulo, genero, isbn, editorial, autores]
                 libro = Libro(*lista)
                 
-                respuesta = libro.editar_libro(index,lista_libros)
+                respuesta = libro.editar_libro(index, lista_libros, archivo_actual)
                 if respuesta.upper() == 'N':
                     break
             else:
