@@ -198,7 +198,12 @@ def run():
     while True:
         print(Menu)
 
-        opcion = int(input("Seleccione una opcion: "))
+        opcion = input("Seleccione una opcion: ")
+
+        while opcion not in ('1', '2', '3', '4', '5', '6'):
+            opcion = input("Opción incorrecta. Seleccione una opción: ")
+
+        opcion = int(opcion)
 
         if opcion == 1:
             pokeAPi.list_poke_generacion()
