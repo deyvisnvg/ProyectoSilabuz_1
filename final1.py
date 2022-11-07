@@ -333,28 +333,14 @@ def run():
             lista_libros = libro._lista_libros
             archivo_actual = libro.archivo_actual
 
-            if len(lista_libros) >= 1:           
-                filtro = [int(lib['id']) for lib in libro._lista_libros]
-
-                while True:
-                    try:
-                        id = int(input("Ingrese un Id: "))
-                        if id in filtro:  
-                            id = int(input("Incorrecto!, ingrese nuevo Id: "))
-                        else:
-                            break                   
-
-                    except ValueError:
-                        print("Advertencia!: Ingrese un Id correcto\n")
-                        
-                titulo = input("Ingrese el título: ")
+            if len(lista_libros) >= 1:
+                id = input("Ingrese un Id: ")
+                titulo = input("\nIngrese el título: ")
                 genero = input("Ingrese el género: ")
                 isbn = input("Ingrese el ISBN: ")
                 editorial = input("Ingrese la editorial: ")
                 autores = input("Ingrese los autores separados por comas: ")
-                
-                
-                
+               
                 lista = [id, titulo, genero, isbn, editorial, autores]     
                 libro = Libro(*lista)
                 
