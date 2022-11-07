@@ -90,7 +90,7 @@ class Libro:
                 print(f"\n\tMensaje: El archivo {self.archivo_actual} ya fue cargado!...\n")
                 return self._continuar()
 
-            leer = input("Desea leer el libro por 1:txt o 2:csv?: ")
+            leer = input("\nDesea leer el libro por 1:txt o 2:csv?: ")
 
             while leer not in ('1', '2'):
                 leer = input("Opción incorrecta!. Desea leer el libro por 1:txt o 2:csv?: ")
@@ -117,6 +117,10 @@ class Libro:
     def listar_libro(self):
         print(Title["2"])
 
+        if len(self._lista_libros) == 0:
+            print("\tDatos vacíos, debe de Leer el Libro antes de Ordenar (Opción 1)")
+            return self._continuar()
+
         try:
             for libro in self._lista_libros:
                 print(self.print_libros(libro))
@@ -130,7 +134,7 @@ class Libro:
         self.archivo_actual = archivo_actual
         self._libros_eliminados = libros_eliminados
         estado = 0
-        
+
         lista_libro = [self.id,self.titulo,self.genero,self.ISBN,self.editorial,self.autores]
         respuesta = input("\nEsta seguro que quiere agregar un nuevo libro(S/N): ")
         try:
@@ -315,7 +319,12 @@ def run():
     while True:
         print(Menu)
 
-        opcion = int(input("Seleccione una opcion: "))
+        opcion = input("Seleccione una opcion: ")
+
+        while opcion not in ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'):
+            opcion = input("Opción incorrecta. Seleccione una opción: ")
+
+        opcion = int(opcion)
 
         if opcion == 1:
             estado = 1
@@ -334,13 +343,25 @@ def run():
             archivo_actual = libro.archivo_actual
 
             if len(lista_libros) >= 1:
-                id = input("Ingrese un Id: ")
-                titulo = input("\nIngrese el título: ")
+                filtro = [int(lib['id']) for lib in lista_libros]
+
+                while True:
+                    try:
+                        id = int(input("Ingrese un Id: "))
+
+                        while id in filtro:
+                            id = int(input("El id ya existe. Ingrese nuevamente: "))
+
+                        break
+                    except:
+                        print("\nAdvertencia!: El Id es incorrecto!\n")
+
+                titulo = input("Ingrese el título: ")
                 genero = input("Ingrese el género: ")
                 isbn = input("Ingrese el ISBN: ")
                 editorial = input("Ingrese la editorial: ")
                 autores = input("Ingrese los autores separados por comas: ")
-               
+
                 lista = [id, titulo, genero, isbn, editorial, autores]     
                 libro = Libro(*lista)
                 
