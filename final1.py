@@ -219,12 +219,12 @@ class Libro:
         print(Title["8"])
 
         if len(self._lista_libros) >= 1:
-            num_autor = int(input("\nDigite la cantidad de autores: "))
+            num_autor = input("\nDigite la cantidad de autores: ")
 
-            filtro = [len(libro['autores'].split(',')) for libro in self._lista_libros]
+            filtro = [str(len(libro['autores'].split(','))) for libro in self._lista_libros]
 
             while num_autor not in filtro:
-                num_autor = int(input(f"No existe el Libro con esa cantidad de Autores. Digite nuevamente: "))
+                num_autor = input(f"No existe el Libro con esa cantidad de Autores. Digite nuevamente: ")
         else:
             print("\tDatos vacíos, debe de Leer el Libro antes de Buscar (Opción 1)")
             return self._continuar()
@@ -232,7 +232,7 @@ class Libro:
         for libro in self._lista_libros:
             count_autor = len(libro['autores'].split(','))
             
-            if count_autor == num_autor:
+            if count_autor == int(num_autor):
                 print(self.print_libros(libro))
 
         return self._continuar()
@@ -269,27 +269,42 @@ class Libro:
         return self._continuar()
 
     def guardar_libro(self):
-        respuesta = input("\nDesea guardar los libros en un archivo txt o csv? \n" +
-                            "Seleccione una opcion: 1:txt, 2:csv: ")
-        nombre_archivo = input("\nEspecifique el nombre del archivo a generar: ")
-
-        if respuesta == '2' and len(self._lista_libros) > 0:
-            with open(nombre_archivo + '.csv', 'w') as file:
-                colum = list(self._lista_libros[0].keys())
-
-                writer = csv.DictWriter(file, fieldnames=colum)
-                writer.writeheader()
-
-                writer.writerows(self._lista_libros)
-        else:
-            with open(nombre_archivo + '.txt', 'w') as file:
-                for libro in self._lista_libros:
-                    file.write(self.print_libros(libro))
-        
         print(Title["10"])
-        print(f"Mensaje: Los Libros se guardaron correctamente!!!")
 
-        return self._continuar()
+        if len(self._lista_libros) >= 1:
+            respuesta = input("\nDesea guardar los libros en un archivo txt o csv? \n" +
+                                "Seleccione una opcion: 1:txt, 2:csv: ")
+
+            while respuesta not in ('1', '2'):
+                respuesta = input("Opción incorrecta!. Seleccione una opcion:: 1:txt, 2:csv: ")
+                
+            if respuesta == '1':
+                extension = ".txt"
+            elif respuesta == '2':
+                extension = ".csv"
+        
+            nombre_archivo = input("\nEspecifique el nombre del archivo a generar: ")
+
+            if respuesta == '2' and len(self._lista_libros) > 0:
+                with open(nombre_archivo + extension, 'w') as file:
+                    colum = list(self._lista_libros[0].keys())
+
+                    writer = csv.DictWriter(file, fieldnames=colum)
+                    writer.writeheader()
+
+                    writer.writerows(self._lista_libros)
+            else:
+                with open(nombre_archivo + extension, 'w') as file:
+                    for libro in self._lista_libros:
+                        file.write(self.print_libros(libro))
+            
+            print(f"\nMensaje: Los Libros se guardaron correctamente!!!")
+
+            return self._continuar()
+        else:
+            print(f"\n\tMensaje: Es necesario realizar la opción 1.\n")
+            print(f"\t\t     La Lista de Libros se encuentra vacía!\n")
+            return self._continuar()
 
     def print_libros(self, libro):
         titulo = f"\n\tLIBRO {libro['id']}:\n"
@@ -400,11 +415,23 @@ def run():
             archivo_actual = libro.archivo_actual
 
             if len(lista_libros) >= 1:
-                id = input("Ingrese ID del libro a modificar: ")
+                filtro = [int(lib['id']) for lib in lista_libros]
+
+                while True:
+                    try:
+                        id = int(input("Ingrese ID del libro a modificar: "))
+
+                        while id not in filtro:
+                            id = int(input("El id del libro no existe. Ingrese nuevamente: "))
+
+                        break
+                    except:
+                        print("\nAdvertencia!: El Id del libro es incorrecto!\n")
+
                 print("\nDatos previos:")
                 print("-"*20)
                 
-                index = [i for i, libro in enumerate(lista_libros) if libro["id"] == id][0]
+                index = [i for i, libro in enumerate(lista_libros) if libro["id"] == str(id)][0]
                 
                 print(libro.print_libros(lista_libros[index]))
                 
@@ -417,7 +444,7 @@ def run():
                 editorial = input("Ingrese la nueva editorial: ")
                 autores = input("Ingrese los nuevos autores separados por comas: ")
                 
-                lista = [id, titulo, genero, isbn, editorial, autores]
+                lista = [str(id), titulo, genero, isbn, editorial, autores]
                 libro = Libro(*lista)
                 
                 respuesta = libro.editar_libro(index, lista_libros, archivo_actual)
