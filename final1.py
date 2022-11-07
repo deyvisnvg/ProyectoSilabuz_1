@@ -127,7 +127,6 @@ class Libro:
             print(f"\tMensaje: No es posible continuar listando los libros ya que se encuentra incompleto")
 
     def agregar_libro(self, libros_eliminados, archivo_actual):
-        print(self.archivo_actual)
         self.archivo_actual = archivo_actual
         self._libros_eliminados = libros_eliminados
         lista_libro = [self.id,self.titulo,self.genero,self.ISBN,self.editorial,self.autores]
@@ -331,11 +330,17 @@ def run():
             lista_libros = libro._lista_libros
             archivo_actual = libro.archivo_actual
 
-            if len(lista_libros) >= 1:
+            if len(lista_libros) >= 1:           
+                filtro = [int(lib['id']) for lib in libro._lista_libros]
+
                 while True:
                     try:
-                        id = int(input("Ingrese Id: "))
-                        break
+                        id = int(input("Ingrese un Id: "))
+                        if id in filtro:  
+                            id = int(input("Incorrecto!, ingrese nuevo Id: "))
+                        else:
+                            break                   
+
                     except ValueError:
                         print("Advertencia!: Ingrese un Id correcto\n")
                         
@@ -412,7 +417,7 @@ def run():
                 print(f"\t\t     Para obtener la Lista de Libros y poder editarlo!\n")
                 continuar = libro._continuar()
                 if continuar.upper() == 'N':
-                    breaks
+                    break
             
         elif opcion == 10:
             libro.guardar_libro()
