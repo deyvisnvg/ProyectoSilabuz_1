@@ -2,4 +2,3 @@ id,titulo,genero,ISBN,editorial,autores
 1,el senior de los anillos2,accion,12349,delfines,ana
 2,hobbit,terror,13349,tiburones,"ana, dina"
 3,harry potter,ficcion,123485,delfin,bill
-1,s,s,s,ss,s
